@@ -1,0 +1,32 @@
+# IDE 本地配置
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.settings/
+.classpath
+.project
+
+# 编译和测试产物
+target/
+out/
+build/
+*.class
+*.log
+
+# 操作系统缓存
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+
+# 临时编辑文件
+*~
+*.swp
+*.swo
+
+# 本地环境配置
+.env
+.env.*
+!.env.example
