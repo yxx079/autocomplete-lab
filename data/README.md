@@ -12,7 +12,7 @@ classroom 用于小规模功能及边界验证；benchmark 用于实际查询和
 
 当前是区分大小写的原文本前缀搜索，不是拼音、翻译或全文包含搜索。
 
-来源：[Princeton Autocomplete 课程项目](https://www.cs.princeton.edu/courses/archive/fall25/cos226/assignments/autocomplete/specification.php)，数据从现有 Autocomplete_Data_Full 数据包整理，内容未修改。保留 acknowledgments.txt 原始随附文件；它不是数据来源许可证，也不是可加载数据。
+来源：[Princeton Autocomplete 课程项目](https://www.cs.princeton.edu/courses/archive/fall25/cos226/assignments/autocomplete/specification.php)，数据从现有 Autocomplete_Data_Full 数据包整理，内容未修改。原数据包中的作业声明模板不作为本工程的数据文件收录。
 
 | 文件 | 记录数 |
 |---|---:|
