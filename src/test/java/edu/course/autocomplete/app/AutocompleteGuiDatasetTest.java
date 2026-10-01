@@ -56,7 +56,7 @@ class AutocompleteGuiDatasetTest {
 
     @Test
     void menuUsesFactoryNamesAndUnknownAlgorithmIsRejected() throws Exception {
-        assertEquals(List.of("linear", "binary"), EngineFactory.supportedEngineNames());
+        assertEquals(List.of("linear", "binary", "trie"), EngineFactory.supportedEngineNames());
         Path data = write("data.txt", "1\n3\tapple\n");
         for (String name : EngineFactory.supportedEngineNames()) {
             assertEquals(name, AutocompleteGui.loadDataset(data, name).engine.name());

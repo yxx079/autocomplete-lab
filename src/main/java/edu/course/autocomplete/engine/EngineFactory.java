@@ -17,6 +17,7 @@ public final class EngineFactory {
         Map<String, Function<Collection<Term>, AutocompleteEngine>> engines = new LinkedHashMap<>();
         engines.put("linear", LinearAutocomplete::new);
         engines.put("binary", BinarySearchAutocomplete::new);
+        engines.put("trie", TrieAutocomplete::new);
         // 新算法实现 AutocompleteEngine 后，在这里登记名称和构造方法即可。
         ENGINES = Collections.unmodifiableMap(engines);
     }

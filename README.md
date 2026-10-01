@@ -62,3 +62,5 @@ mvn -Dtest=TermTest,DatasetLoaderTest,AutocompleteGuiDatasetTest,BenchmarkRunner
 ## 分支
 
 main 是当前二分查找练习工程；feature/trie-search 在此基础上加入 Trie 骨架及扩展测试。切换分支后重新编译，GUI 自动读取对应的算法列表。后续可将 feature/trie-search 合并回 main，TODO 的完成情况仍以测试为准。
+
+当前 feature/trie-search 分支另包含 TrieAutocomplete 和独立的 TrieAutocompleteContractTest，以及 extensions 中的大小写无关搜索测试。它们是待完成的后续扩展，合并本分支不会自动完成这些 TODO。
