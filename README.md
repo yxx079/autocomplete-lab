@@ -35,7 +35,11 @@ java -cp target/classes edu.course.autocomplete.app.AutocompleteGui data/benchma
 | compatibility | Princeton 数组接口的兼容包装 |
 | benchmark | 查询耗时统计与 CSV 输出 |
 
-main 分支保留 linear 与 binary；后续 Trie 及大小写无关搜索的扩展测试保存在 feature/trie-search 分支。源码中的 TODO 及测试初始失败是练习工程的既有状态；作业要求见 [Java05：二分查找与 Autocomplete](assignments/java05_二分查找与Autocomplete.md)，详细讲解放在课程讲义中。
+main 分支保留 linear 与 binary；
+
+源码中的 TODO 及测试初始失败是练习工程的既有状态；
+
+作业要求见 [Java05：二分查找与 Autocomplete](assignments/java05_二分查找与Autocomplete.md)，详细讲解放在课程讲义中。
 
 ## 数据
 
