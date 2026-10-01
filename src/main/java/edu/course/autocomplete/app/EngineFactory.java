@@ -1,4 +1,9 @@
-package edu.course.autocomplete.engine;
+package edu.course.autocomplete.app;
+
+import edu.course.autocomplete.search.AutocompleteEngine;
+import edu.course.autocomplete.search.LinearAutocomplete;
+import edu.course.autocomplete.search.BinarySearchAutocomplete;
+import edu.course.autocomplete.search.TrieAutocomplete;
 
 import edu.course.autocomplete.model.Term;
 

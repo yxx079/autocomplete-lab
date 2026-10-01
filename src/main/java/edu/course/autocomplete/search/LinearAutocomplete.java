@@ -1,4 +1,6 @@
-package edu.course.autocomplete.engine;
+package edu.course.autocomplete.search;
+
+import edu.course.autocomplete.comparison.WeightThenQueryComparator;
 
 import edu.course.autocomplete.model.Term;
 
@@ -26,7 +28,7 @@ public final class LinearAutocomplete implements AutocompleteEngine {
                 matches.add(term);
             }
         }
-        matches.sort(TermRanking.BY_WEIGHT_THEN_QUERY);
+        matches.sort(WeightThenQueryComparator.INSTANCE);
         return List.copyOf(matches.subList(0, Math.min(limit, matches.size())));
     }
 

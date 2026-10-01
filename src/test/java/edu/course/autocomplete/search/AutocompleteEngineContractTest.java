@@ -1,4 +1,4 @@
-package edu.course.autocomplete.engine;
+package edu.course.autocomplete.search;
 
 import edu.course.autocomplete.model.Term;
 
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-class TrieAutocompleteContractTest {
+class AutocompleteEngineContractTest {
     private static final List<Term> TERMS = List.of(
             new Term("app", 15),
             new Term("apple", 50),
@@ -27,7 +27,8 @@ class TrieAutocompleteContractTest {
 
     private static Stream<EngineCase> engines() {
         return Stream.of(
-                new EngineCase("trie", TrieAutocomplete::new));
+                new EngineCase("linear", LinearAutocomplete::new),
+                new EngineCase("binary", BinarySearchAutocomplete::new));
     }
 
     @TestFactory

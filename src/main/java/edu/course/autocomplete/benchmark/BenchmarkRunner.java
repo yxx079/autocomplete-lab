@@ -1,6 +1,6 @@
 package edu.course.autocomplete.benchmark;
 
-import edu.course.autocomplete.engine.AutocompleteEngine;
+import edu.course.autocomplete.search.AutocompleteEngine;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

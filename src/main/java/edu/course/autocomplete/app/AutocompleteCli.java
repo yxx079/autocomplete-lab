@@ -1,8 +1,7 @@
 package edu.course.autocomplete.app;
 
-import edu.course.autocomplete.data.DatasetLoader;
-import edu.course.autocomplete.engine.AutocompleteEngine;
-import edu.course.autocomplete.engine.EngineFactory;
+import edu.course.autocomplete.io.DatasetLoader;
+import edu.course.autocomplete.search.AutocompleteEngine;
 import edu.course.autocomplete.model.Term;
 
 import java.nio.file.Path;

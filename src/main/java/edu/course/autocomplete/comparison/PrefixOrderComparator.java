@@ -1,4 +1,6 @@
-package edu.course.autocomplete.model;
+package edu.course.autocomplete.comparison;
+
+import edu.course.autocomplete.model.Term;
 
 import java.util.Comparator;
 

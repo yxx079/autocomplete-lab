@@ -1,5 +1,8 @@
 package edu.course.autocomplete.model;
 
+import edu.course.autocomplete.comparison.PrefixOrderComparator;
+import edu.course.autocomplete.comparison.ReverseWeightComparator;
+
 import java.util.Comparator;
 import java.util.Objects;
 

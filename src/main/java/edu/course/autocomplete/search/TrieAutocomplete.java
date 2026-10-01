@@ -1,4 +1,6 @@
-package edu.course.autocomplete.engine;
+package edu.course.autocomplete.search;
+
+import edu.course.autocomplete.comparison.WeightThenQueryComparator;
 
 import edu.course.autocomplete.model.Term;
 
@@ -59,7 +61,7 @@ public final class TrieAutocomplete implements AutocompleteEngine {
         }
         List<Term> matches = new ArrayList<>((int) Math.min(node.subtreeCount, Integer.MAX_VALUE));
         collect(node, matches);
-        matches.sort(TermRanking.BY_WEIGHT_THEN_QUERY);
+        matches.sort(WeightThenQueryComparator.INSTANCE);
         return List.copyOf(matches.subList(0, Math.min(limit, matches.size())));
     }
 
