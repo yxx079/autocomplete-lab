@@ -1,2 +1,0 @@
-engine,prefix,warmup_rounds,measure_rounds,matches,median_ns,p95_ns
-binary,San,20,100,311,125000,181000

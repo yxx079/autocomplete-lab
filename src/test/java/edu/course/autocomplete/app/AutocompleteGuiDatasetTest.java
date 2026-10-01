@@ -1,6 +1,5 @@
 package edu.course.autocomplete.app;
 
-import edu.course.autocomplete.engine.EngineFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;

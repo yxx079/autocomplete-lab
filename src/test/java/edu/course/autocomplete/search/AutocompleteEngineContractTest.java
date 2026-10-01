@@ -1,4 +1,4 @@
-package edu.course.autocomplete.engine;
+package edu.course.autocomplete.search;
 
 import edu.course.autocomplete.model.Term;
 

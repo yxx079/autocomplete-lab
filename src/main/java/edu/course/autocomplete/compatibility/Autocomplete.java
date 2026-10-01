@@ -1,4 +1,6 @@
-package edu.course.autocomplete.engine;
+package edu.course.autocomplete.compatibility;
+
+import edu.course.autocomplete.search.BinarySearchAutocomplete;
 
 import edu.course.autocomplete.model.Term;
 

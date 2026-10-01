@@ -1,4 +1,4 @@
-package edu.course.autocomplete.data;
+package edu.course.autocomplete.io;
 
 import edu.course.autocomplete.model.Term;
 

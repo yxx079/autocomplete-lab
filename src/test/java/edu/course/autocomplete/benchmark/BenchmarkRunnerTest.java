@@ -1,7 +1,7 @@
 package edu.course.autocomplete.benchmark;
 
-import edu.course.autocomplete.engine.AutocompleteEngine;
-import edu.course.autocomplete.engine.LinearAutocomplete;
+import edu.course.autocomplete.search.AutocompleteEngine;
+import edu.course.autocomplete.search.LinearAutocomplete;
 import edu.course.autocomplete.model.Term;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
