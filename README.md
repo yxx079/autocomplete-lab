@@ -47,6 +47,43 @@ main 分支保留 linear 与 binary；
 
 GUI 下拉框切换同目录文件，“打开数据文件…”选择其他目录。算法选项来自 app/EngineFactory。数据读取、排序和索引构建不计入 query 时间；比较时保持相同文件、前缀和显示数量。
 
+`data/benchmark` 中的文件是不同业务场景、不同规模的搜索词库。每次选择一份，两种算法使用同一份数据比较，不需要逐个运行。文件首行是记录数，后续每行是“权重 + 制表符 + 查询文本”；权重用于结果排名，不同数据集的权重含义可能不同。
+
+| 数据文件（位于 `data/benchmark/`） | 记录数 | 内容与用途 |
+|---|---:|---|
+| `actors.txt` | 2,875,183 | 演员姓名；本课主要性能对比数据 |
+| `words-333333.txt` | 333,333 | 英文单词；演示词语补全 |
+| `mandarin.txt` | 94,339 | 中文词语；演示中文前缀补全 |
+| `2grams.txt` | 277,718 | 两词短语；演示含空格的短语补全 |
+| `3grams.txt` | 1,020,009 | 三词短语；演示短语补全及大数据查询 |
+| `4grams.txt` | 1,034,307 | 四词短语；演示较长文本的补全 |
+| `5grams.txt` | 1,044,268 | 五词短语；演示较长文本的补全 |
+| `bing.txt` | 250,000 | 搜索词；模拟搜索框联想 |
+| `alexa.txt` | 1,000,000 | 网站域名；模拟网址补全 |
+| `cities.txt` | 93,827 | 城市名称；模拟地点选择 |
+| `movies.txt` | 229,447 | 电影名称；模拟电影搜索 |
+| `imdb-votes.txt` | 82,455 | 带投票权重的电影名称；观察按权重排序的结果 |
+| `artists.txt` | 43,848 | 艺人名称；模拟音乐搜索 |
+| `songs.txt` | 922,229 | 歌曲名称；模拟音乐搜索及大数据查询 |
+| `metal-albums.txt` | 3,000 | 金属音乐专辑名称；快速体验专辑搜索 |
+| `baby-names.txt` | 31,109 | 人名；模拟姓名补全 |
+| `nasdaq.txt` | 2,658 | 公司名称；模拟公司搜索 |
+| `pu-courses.txt` | 6,771 | 课程名称；模拟选课搜索 |
+| `trademarks.txt` | 92,254 | 商标相关名称；体验另一种文本检索场景 |
+| `redditors.txt` | 10,000 | Reddit 社区名称；模拟社区搜索 |
+| `wiktionary.txt` | 10,000 | 英文词库；用于快速体验 |
+
+本课可按以下顺序使用数据：
+
+| 目的 | 数据文件 | 输入前缀 | 匹配数 |
+|---|---|---|---:|
+| 检查算法是否正确 | `data/classroom/tiny.txt` | 使用文件中词条的前缀 | 随前缀变化 |
+| 比较 linear 与 binary 的查询耗时 | `data/benchmark/actors.txt` | `Frank W` | 309 |
+| 说明同一套算法可处理中文 | `data/benchmark/mandarin.txt` | `我` | 17 |
+| 补充英文词语示例 | `data/benchmark/words-333333.txt` | `app` | 468 |
+
+当前查询按原始文本开头匹配，并区分大小写。中文和英文使用相同的前缀查找逻辑；输入 `wo` 不会自动匹配“我”，因为项目没有实现拼音转换、翻译或全文包含搜索。
+
 ## 测试
 
 ```bash
@@ -74,6 +111,7 @@ main 是当前二分查找练习工程；feature/trie-search 在此基础上加�
 |---|---|
 | app/AutocompleteGui.java | 窗口、数据与算法切换、结果展示和查询计时 |
 | app/AutocompleteCli.java | 单次命令行查询 |
+| app/BenchmarkDialog.java | 展示性能报告和导出本次测量的 CSV 快照 |
 | app/EngineFactory.java | 登记算法名称，创建接口对应的实现 |
 | search/AutocompleteEngine.java | 规定所有算法共同遵循的查询合同 |
 | search/LinearAutocomplete.java | 扫描全部词条，提供已完成的对照实现 |
@@ -85,7 +123,7 @@ main 是当前二分查找练习工程；feature/trie-search 在此基础上加�
 | comparison/WeightThenQueryComparator.java | 按权重降序，再按文本升序，稳定确定展示顺序 |
 | io/DatasetLoader.java | 读取声明数量、非负权重及原始查询文本 |
 | compatibility/Autocomplete.java | 将 binary 的 List 结果适配为原课程的 Term[] API，不是 GUI 入口 |
-| benchmark/BenchmarkRunner.java | 预热并多次测量 allMatches，输出中位数和 P95；与 GUI 两次调用合计计时口径不同 |
+| benchmark/BenchmarkRunner.java | 预热并多次测量计数与取结果，输出中位数和 P95；计时口径与 GUI 一致 |
 
 测试与被测类放在同名职责包中：GUI 配置、模型、加载器、二分工具、检索合同、数组接口兼容、性能 CSV 输出分别测试。
 
@@ -98,3 +136,9 @@ main 是当前二分查找练习工程；feature/trie-search 在此基础上加�
 | io/DatasetLoaderTest.java | UTF-8 文本、记录数、制表符、权重和末尾空行 |
 | compatibility/AutocompleteCompatibilityTest.java | 旧数组接口的结果、输入拷贝及非法参数 |
 | benchmark/BenchmarkRunnerTest.java | 性能统计 CSV 的表头、行数和匹配数 |
+
+## GUI 性能对比
+
+输入前缀后点击“性能对比”，在后台按当前数据和显示上限测试所有已登记算法；main 中为 linear 与 binary。每种预热 20 次、测量 100 次，结果窗口展示匹配数、中位耗时、P95 以及展示结果是否一致。构建引擎、读取数据、检查一致性和界面绘制不计入查询时间。
+
+点击报告中的“导出 CSV…”保存当前报告快照。未完成的算法显示错误原因，耗时留空，不能据此宣称结果一致；无需修改本课三个 TODO 之外的代码来使用此功能。

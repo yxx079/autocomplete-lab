@@ -15,6 +15,9 @@ build/
 *.class
 *.log
 
+# 本地性能测试报告
+results/
+
 # 操作系统缓存
 .DS_Store
 ._*

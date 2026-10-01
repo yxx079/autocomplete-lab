@@ -1,7 +1,7 @@
 package edu.course.autocomplete.app;
 
 import edu.course.autocomplete.io.DatasetLoader;
-import edu.course.autocomplete.compatibility.Autocomplete;
+import edu.course.autocomplete.benchmark.BenchmarkRunner;
 import edu.course.autocomplete.search.AutocompleteEngine;
 import edu.course.autocomplete.model.Term;
 
@@ -55,6 +55,7 @@ public final class AutocompleteGui {
     private JFrame frame;
     private final JComboBox<String> datasetSelector = new JComboBox<>();
     private final JButton openDatasetButton = new JButton("打开数据文件…");
+    private final JButton benchmarkButton = new JButton("性能对比");
     private boolean updatingSelector;
     private boolean loading;
     private final int limit;
@@ -122,6 +123,8 @@ public final class AutocompleteGui {
         JPanel inputPanel = new JPanel(new BorderLayout(8, 0));
         inputPanel.add(inputLabel, BorderLayout.WEST);
         inputPanel.add(prefixField, BorderLayout.CENTER);
+        inputPanel.add(benchmarkButton, BorderLayout.EAST);
+        benchmarkButton.addActionListener(event -> comparePerformance());
 
         JPanel datasetPanel = new JPanel(new BorderLayout(8, 0));
         datasetPanel.add(new JLabel("数据文件："), BorderLayout.WEST);
@@ -278,6 +281,7 @@ public final class AutocompleteGui {
         engineSelector.setEnabled(false);
         openDatasetButton.setEnabled(false);
         prefixField.setEnabled(false);
+        benchmarkButton.setEnabled(false);
         statusLabel.setText("正在准备 " + dataset.getFileName() + " / " + requestedEngine + "，完成后重新查询…");
         // 大文件读取与 binary 的预排序在后台进行，不计入 query 时间。
         new SwingWorker<LoadedDataset, Void>() {
@@ -313,6 +317,7 @@ public final class AutocompleteGui {
                     engineSelector.setEnabled(true);
                     openDatasetButton.setEnabled(true);
                     prefixField.setEnabled(true);
+                    benchmarkButton.setEnabled(true);
                     refreshResults();
                     prefixField.requestFocusInWindow();
                 }
@@ -340,6 +345,50 @@ public final class AutocompleteGui {
         }
     }
 
+    private void comparePerformance() {
+        if (loading) return;
+        String prefix = prefixField.getText();
+        if (prefix.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "请先输入要比较的前缀，例如 Frank W。");
+            return;
+        }
+        // 固定本次输入，避免后台测量与主窗口切换的数据混在一起。
+        Path dataset = currentDataset;
+        List<Term> terms = currentTerms;
+        int records = recordCount;
+        List<String> names = List.copyOf(EngineFactory.supportedEngineNames());
+        loading = true;
+        datasetSelector.setEnabled(false);
+        engineSelector.setEnabled(false);
+        openDatasetButton.setEnabled(false);
+        prefixField.setEnabled(false);
+        benchmarkButton.setEnabled(false);
+        statusLabel.setText("正在比较算法：每种先预热 20 次，再测量 100 次…");
+        new SwingWorker<BenchmarkRunner.Comparison, Void>() {
+            @Override protected BenchmarkRunner.Comparison doInBackground() {
+                return BenchmarkRunner.compare(names, name -> EngineFactory.create(name, terms),
+                        prefix, limit, 20, 100);
+            }
+            @Override protected void done() {
+                try {
+                    BenchmarkRunner.Comparison result = get();
+                    if (frame.isDisplayable()) BenchmarkDialog.show(frame, dataset, records, result);
+                } catch (Exception exception) {
+                    Throwable cause = exception.getCause() == null ? exception : exception.getCause();
+                    JOptionPane.showMessageDialog(frame, "性能测试失败：" + cause.getMessage());
+                } finally {
+                    loading = false;
+                    datasetSelector.setEnabled(true);
+                    engineSelector.setEnabled(true);
+                    openDatasetButton.setEnabled(true);
+                    prefixField.setEnabled(true);
+                    benchmarkButton.setEnabled(true);
+                    refreshResults();
+                }
+            }
+        }.execute();
+    }
+
     private void refreshResults() {
         if (loading) {
             return;
@@ -352,17 +401,21 @@ public final class AutocompleteGui {
             return;
         }
 
-        long startedAt = System.nanoTime();
-        long matchCount = engine.numberOfMatches(prefix);
-        List<Term> matches = engine.allMatches(prefix, limit);
-        double elapsedMilliseconds = (System.nanoTime() - startedAt) / 1_000_000.0;
+        try {
+            long startedAt = System.nanoTime();
+            long matchCount = engine.numberOfMatches(prefix);
+            List<Term> matches = engine.allMatches(prefix, limit);
+            double elapsedMilliseconds = (System.nanoTime() - startedAt) / 1_000_000.0;
 
-        for (Term term : matches) {
-            resultModel.addRow(new Object[] {term.query(), String.format("%,d", term.weight())});
+            for (Term term : matches) {
+                resultModel.addRow(new Object[] {term.query(), String.format("%,d", term.weight())});
+            }
+            statusLabel.setText(String.format(
+                    "engine=%s    records=%,d    matches=%,d    query=%.3f ms",
+                    engine.name(), recordCount, matchCount, elapsedMilliseconds));
+        } catch (RuntimeException exception) {
+            statusLabel.setText("engine=" + engine.name() + "    查询未完成：" + exception.getMessage());
         }
-        statusLabel.setText(String.format(
-                "engine=%s    records=%,d    matches=%,d    query=%.3f ms",
-                engine.name(), recordCount, matchCount, elapsedMilliseconds));
     }
 
     private static Path resolveDataset(Path requested) {
