@@ -4,7 +4,7 @@ Java 前缀补全项目，包含可切换数据和算法的桌面 GUI、命令�
 
 ## 打开与运行
 
-在 IntelliJ IDEA 中打开根目录 pom.xml，作为 Maven 项目导入。运行 app 包中的 AutocompleteGui.main，Program arguments 留空即可：默认 tiny.txt、linear、最多 10 条结果。数据与算法可在 GUI 内切换。已有的算法 TODO 保留，未完成实现不能用于查询。
+在 IntelliJ IDEA 中打开根目录 pom.xml，作为 Maven 项目导入。运行 app 包中的 AutocompleteGui.main，Program arguments 留空即可：默认 tiny.txt、linear、最多 10 条结果。数据与算法可在 GUI 内切换。第5课二分检索参考答案已补全，可切换linear与binary查询；JavaLab06课堂方法仍保留TODO。
 
 主类完整名称：edu.course.autocomplete.app.AutocompleteGui。
 
@@ -37,9 +37,14 @@ java -cp target/classes edu.course.autocomplete.app.AutocompleteGui data/benchma
 
 main 分支保留 linear 与 binary；
 
-源码中的 TODO 及测试初始失败是练习工程的既有状态；
+第5课的firstIndexOf、lastIndexOf和matchingRange已提供带注释的参考实现；JavaLab06的TODO及对应初始测试失败用于本课练习；
 
-作业要求见 [Java05：二分查找与 Autocomplete](assignments/java05_二分查找与Autocomplete.md)，详细讲解放在课程讲义中。
+作业要求：
+
+- [Java05：二分查找与 Autocomplete](assignments/java05_二分查找与Autocomplete.md)
+- [JavaLab06：名称筛选与计数](assignments/java06_名称筛选与计数.md)
+
+详细讲解放在课程讲义中。
 
 ## 数据
 
@@ -91,9 +96,31 @@ mvn test
 mvn -Dtest=TermTest,DatasetLoaderTest,AutocompleteGuiDatasetTest,BenchmarkRunnerTest test
 ```
 
-第一个命令运行全部已有测试，包括尚未完成的二分算法测试；第二个命令验证已提供的数据模型、加载器、GUI 配置及基准输出逻辑。
+第一个命令运行全部已有测试，包括尚未完成的JavaLab06练习测试；第二个命令验证已提供的数据模型、加载器、GUI 配置及基准输出逻辑。
+
+只验收第5课答案及原有项目功能（不运行本节尚未填写的练习）：
+
+```bash
+mvn -Dtest=BinarySearchDeluxeTest,AutocompleteEngineContractTest,AutocompleteCompatibilityTest,TermTest,DatasetLoaderTest,AutocompleteGuiDatasetTest,BenchmarkRunnerTest,BenchmarkDialogTest test
+```
+
+当前这34项测试已通过；完整mvn test仍会运行JavaLab06的20项练习测试，其中待填写部分会失败。这不表示第5课答案没有补全。
 
 统一通过 Maven 构建和测试，不再维护额外的离线脚本及 JUnit JAR。
+
+## JavaLab06 课堂练习
+
+本课练习已加入 `src/main/java/edu/course/lesson06/practice`：
+
+- `LabelPractice`：填写firstPart，截取名称开头的一部分。
+- `NamesPractice`：填写printLongNames，逐个检查并打印达到长度要求的名称。
+- `CityReportPractice`：组合现有查询方法，生成城市查询报告。
+
+对应测试在 `src/test/java/edu/course/lesson06/practice`。数据定位辅助类DatasetPaths已提供，使用本项目的data/benchmark/cities.txt；不用另装教学模块依赖。
+
+IntelliJ打开本项目pom.xml后，先运行LabelPracticeTest，再运行NamesPracticeTest，最后运行CityReportPracticeTest。初始方法尚未填写，测试失败为预期；城市测试还会检查原有binary实现，不代表只完成报告就能通过全部测试。
+
+二分作业的两个城市名称检查已在search/BinarySearchDeluxeTest.java：checksOneCityName检查只有Kyoto的数组，checksAllEqualCityNames检查三个Oslo。点击测试方法左侧绿色运行按钮即可单独运行，无需GUI。
 
 ## Git
 
@@ -103,7 +130,7 @@ mvn -Dtest=TermTest,DatasetLoaderTest,AutocompleteGuiDatasetTest,BenchmarkRunner
 
 ## 分支
 
-main 是当前二分查找练习工程；feature/trie-search 在此基础上加入 Trie 骨架及扩展测试。切换分支后重新编译，GUI 自动读取对应的算法列表。后续可将 feature/trie-search 合并回 main，TODO 的完成情况仍以测试为准。
+main包含第5课二分查找参考答案和JavaLab06练习；feature/trie-search 在此基础上加入 Trie 骨架及扩展测试。切换分支后重新编译，GUI 自动读取对应的算法列表。后续可将 feature/trie-search 合并回 main，TODO 的完成情况仍以测试为准。
 
 ## 每个源文件的职责
 
@@ -141,4 +168,4 @@ main 是当前二分查找练习工程；feature/trie-search 在此基础上加�
 
 输入前缀后点击“性能对比”，在后台按当前数据和显示上限测试所有已登记算法；main 中为 linear 与 binary。每种预热 20 次、测量 100 次，结果窗口展示匹配数、中位耗时、P95 以及展示结果是否一致。构建引擎、读取数据、检查一致性和界面绘制不计入查询时间。
 
-点击报告中的“导出 CSV…”保存当前报告快照。未完成的算法显示错误原因，耗时留空，不能据此宣称结果一致；无需修改本课三个 TODO 之外的代码来使用此功能。
+点击报告中的“导出 CSV…”保存当前报告快照。未完成的算法显示错误原因，耗时留空，不能据此宣称结果一致；此功能已经提供，不属于JavaLab06需要填写的练习。

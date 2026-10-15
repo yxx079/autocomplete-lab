@@ -16,6 +16,7 @@ public final class BinarySearchAutocomplete implements AutocompleteEngine {
     public BinarySearchAutocomplete(Collection<Term> terms) {
         List<Term> copy = LinearAutocomplete.validatedCopy(terms);
         sortedTerms = copy.toArray(new Term[0]);
+        // 按名称排序，保证相同前缀的词条连续。
         Arrays.sort(sortedTerms);
     }
 
@@ -29,7 +30,9 @@ public final class BinarySearchAutocomplete implements AutocompleteEngine {
         if (range[0] < 0) {
             return List.of();
         }
+        // 匹配范围包含右端，copyOfRange 的右端不包含。
         Term[] matches = Arrays.copyOfRange(sortedTerms, range[0], range[1] + 1);
+        // 仅对匹配结果排名，保留检索数组的顺序。
         Arrays.sort(matches, WeightThenQueryComparator.INSTANCE);
         return List.copyOf(Arrays.asList(matches).subList(0, Math.min(limit, matches.length)));
     }
@@ -43,24 +46,17 @@ public final class BinarySearchAutocomplete implements AutocompleteEngine {
         return range[0] < 0 ? 0 : range[1] - range[0] + 1L;
     }
 
+    /** 返回包含左右端点的匹配范围；无匹配时返回 {-1, -1}。 */
     private int[] matchingRange(String prefix) {
-        /*
-         * TODO：返回前缀匹配范围的闭区间 {first, last}。
-         *
-         * 已知条件：
-         * - sortedTerms 已在构造器中按照 Term 的自然顺序排序。
-         * - Term.byPrefixOrder(prefix.length()) 只比较前 prefix.length() 个位置。
-         *
-         * 建议步骤：
-         * 1. 创建前缀 Comparator。
-         * 2. 创建 query 为 prefix 的临时 Term；weight 不参与前缀比较。
-         * 3. 调用 BinarySearchDeluxe 找到 first。
-         * 4. first 为 -1 时直接返回 {-1, -1}。
-         * 5. 再找到 last，返回 {first, last}。
-         *
-         * 检索阶段要求保持 O(log n)，不要修改方法签名。
-         */
-        throw new UnsupportedOperationException("TODO: matchingRange");
+        Comparator<Term> comparator = Term.byPrefixOrder(prefix.length());
+        // 权重不参与前缀比较。
+        Term key = new Term(prefix, 0);
+        int first = BinarySearchDeluxe.firstIndexOf(sortedTerms, key, comparator);
+        if (first == -1) {
+            return new int[] {-1, -1};
+        }
+        int last = BinarySearchDeluxe.lastIndexOf(sortedTerms, key, comparator);
+        return new int[] {first, last};
     }
 
     @Override

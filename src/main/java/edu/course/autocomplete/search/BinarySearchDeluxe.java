@@ -7,35 +7,58 @@ public final class BinarySearchDeluxe {
     private BinarySearchDeluxe() {
     }
 
+    /**
+     * 返回按 comparator 比较相等的第一个位置，未找到时返回 -1。
+     * 数组必须已按同一比较规则排序。
+     */
     public static <Key> int firstIndexOf(Key[] values, Key key, Comparator<Key> comparator) {
         validate(values, key, comparator);
-        /*
-         * TODO：返回与 key 比较结果为 0 的第一个元素下标。
-         *
-         * 建议思路：
-         * 1. 使用闭区间 [low, high] 表示尚未排除的范围。
-         * 2. 准备 result，初始值为 -1，用来保存目前找到的候选下标。
-         * 3. 找到相等元素时不能立即返回，因为左侧可能还有相等元素。
-         * 4. 保存 middle 后继续搜索左半区。
-         *
-         * 边界要求：空数组或不存在 key 时返回 -1。
-         * 复杂度要求：O(log n)，不能从头到尾扫描数组，也不要修改方法签名。
-         */
-        throw new UnsupportedOperationException("TODO: firstIndexOf");
+        int low = 0;
+        int high = values.length - 1;
+        int result = -1;
+        while (low <= high) {
+            int middle = low + (high - low) / 2;
+            int comparison = comparator.compare(values[middle], key);
+            if (comparison < 0) {
+                low = middle + 1;
+            }
+            else if (comparison > 0) {
+                high = middle - 1;
+            }
+            else {
+                // 保留当前匹配，继续向左查找首个位置。
+                result = middle;
+                high = middle - 1;
+            }
+        }
+        return result;
     }
 
+    /**
+     * 返回按 comparator 比较相等的最后一个位置，未找到时返回 -1。
+     * 数组必须已按同一比较规则排序。
+     */
     public static <Key> int lastIndexOf(Key[] values, Key key, Comparator<Key> comparator) {
         validate(values, key, comparator);
-        /*
-         * TODO：返回与 key 比较结果为 0 的最后一个元素下标。
-         *
-         * 结构与 firstIndexOf 相同，但找到相等元素后应继续搜索右半区，
-         * 确认是否存在位置更靠后的相等元素。
-         *
-         * 边界要求：空数组或不存在 key 时返回 -1。
-         * 复杂度要求：O(log n)，不能从头到尾扫描数组，也不要修改方法签名。
-         */
-        throw new UnsupportedOperationException("TODO: lastIndexOf");
+        int low = 0;
+        int high = values.length - 1;
+        int result = -1;
+        while (low <= high) {
+            int middle = low + (high - low) / 2;
+            int comparison = comparator.compare(values[middle], key);
+            if (comparison < 0) {
+                low = middle + 1;
+            }
+            else if (comparison > 0) {
+                high = middle - 1;
+            }
+            else {
+                // 保留当前匹配，继续向右查找最后一个位置。
+                result = middle;
+                low = middle + 1;
+            }
+        }
+        return result;
     }
 
     private static <Key> void validate(Key[] values, Key key, Comparator<Key> comparator) {
